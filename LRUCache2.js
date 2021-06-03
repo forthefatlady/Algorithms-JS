@@ -16,6 +16,19 @@ class LRULinkedList {
         this.first = node;
     }
 
+    drop() {
+        if (this.last) {
+            var parent = this.map.get(this.last.key);
+            if (parent !== undefined) {
+                this.map.delete(this.last.key);
+                parent.next = null;
+            } else {
+                this.first = null;
+            }
+            this.last = parent
+        }
+    }
+
     get (key) {
         if (this.first && this.first.key === key) {
             return this.first.value;
@@ -53,6 +66,9 @@ var ll = new LRULinkedList();
 ll.add([1, 1]);
 ll.add([2, 2]);
 ll.add([3, 3]);
-console.log(ll.map);
-console.log(ll.get(1));
-console.log(ll.map);
+console.log(ll);
+console.log(ll.last);
+ll.drop();
+console.log(ll);
+ll.drop();
+console.log(ll);
