@@ -1,5 +1,6 @@
 class LRULinkedList {
-    constructor() {
+    constructor(capacity) {
+        this.capacity = capacity;
         this.first = null;
         this.last = null;
         this.count = 0;
@@ -7,7 +8,10 @@ class LRULinkedList {
     }
 
     add(kV) {
+        if (this.capacity === 0) return;
+        if (this.capacity === this.count) this.removeLast();
         this.remove(kV[0]);
+        this.count++;
         var node = new Node(this.first, kV[0], kV[1]);
         if (this.first == null) {
             this.last = node;
@@ -17,7 +21,7 @@ class LRULinkedList {
         this.first = node;
     }
 
-    dropLast() {
+    removeLast() {
         if (this.last) this.remove(this.last.key);
     }
 
@@ -40,6 +44,7 @@ class LRULinkedList {
                 parent.next = null;
             }
         }
+        if (node) this.count--;
         return node;
     }
 
@@ -61,10 +66,9 @@ class Node {
     }
 }
 
-var ll = new LRULinkedList();
+var ll = new LRULinkedList(3);
 ll.add([1, 1]);
 ll.add([2, 2]);
-ll.add([1, 1]);
-ll.dropLast();
-ll.dropLast();
+ll.add([3, 3]);
+ll.add([4, 4]);
 console.log(ll);
