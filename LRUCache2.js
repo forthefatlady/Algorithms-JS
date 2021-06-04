@@ -1,12 +1,13 @@
 class LRULinkedList {
-    constructor () {
+    constructor() {
         this.first = null;
         this.last = null;
         this.count = 0;
         this.map = new Map();
     }
 
-    add (kV) {
+    add(kV) {
+        this.remove(kV[0]);
         var node = new Node(this.first, kV[0], kV[1]);
         if (this.first == null) {
             this.last = node;
@@ -16,59 +17,54 @@ class LRULinkedList {
         this.first = node;
     }
 
-    drop() {
-        if (this.last) {
-            var parent = this.map.get(this.last.key);
-            if (parent !== undefined) {
-                this.map.delete(this.last.key);
-                parent.next = null;
-            } else {
-                this.first = null;
-            }
-            this.last = parent
-        }
+    dropLast() {
+        if (this.last) this.remove(this.last.key);
     }
 
-    get (key) {
-        if (this.first && this.first.key === key) {
-            return this.first.value;
+    remove(key) {
+        var node = null;
+        if (this.last && this.last.key === key) {
+            node = this.last;
+            this.last = null;
         }
-
+        if (this.first && this.first.key === key) {
+            node = this.first;
+            this.first = null;
+        }
         var parent = this.map.get(key);
         if (parent !== undefined) {
             this.map.delete(key);
-            var node = parent.next;
-            if (node != null) {
-                var value = node.value;
-                parent.next = node.next;
-                if (!parent.next) {
-                    this.last = parent;
-                }
-                this.add([key, value]);
-                return value;
+            node = parent.next;
+            if (!node.next) {
+                this.last = parent;
+                parent.next = null;
             }
         }
+        return node;
+    }
+
+    get(key) {
+        if (this.first && this.first.key === key) {
+            return this.first.value;
+        }
+        var value = null;
+        if (value) this.add(key, value);
+        return value;
     }
 }
 
 class Node {
-    constructor (next, key, value) {
+    constructor(next, key, value) {
         this.next = next;
         this.key = key;
         this.value = value;
     }
 }
 
-// we should be mapping the key to the parent node, so we can find the node holding the value (stored in k-v form)
-// the paren
-
 var ll = new LRULinkedList();
 ll.add([1, 1]);
 ll.add([2, 2]);
-ll.add([3, 3]);
-console.log(ll);
-console.log(ll.last);
-ll.drop();
-console.log(ll);
-ll.drop();
+ll.add([1, 1]);
+ll.dropLast();
+ll.dropLast();
 console.log(ll);
